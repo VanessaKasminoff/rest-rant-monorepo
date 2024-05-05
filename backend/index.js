@@ -12,9 +12,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 // Controllers & Routes
-
-app.use(express.urlencoded({ extended: true }))
-
 app.use('/places', require('./controllers/places'))
 app.use('/users', require('./controllers/users'))
 
