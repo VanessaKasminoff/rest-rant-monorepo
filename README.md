@@ -6,7 +6,7 @@ First, you'll need a Postgres database to connect to. Follow instructions here t
 
 Next create a `.env` file inside of `backend`. It will need to contain the following environment variables (change the values for the database to match what you defined in the previous step)
 ```
-PORT=3006
+PORT=3030
 DB_USERNAME=rest_rant_user
 DB_PASSWORD=password
 DB_DATABASE=rest_rant
@@ -18,7 +18,7 @@ Next, `cd` into `frontend`, and run `npm install` to install dependencies for th
 
 Finally, in separate terminals, run `npm start` in each folder so that the API and React app are running at the same time.
 
-### API (http://localhost:3006)
+### API (http://localhost:3030)
 | Method | Path                                 | Purpose                                   |
 | ------ | ------------------------------------ | ----------------------------------------- |
 | GET    | /                                    | Home page                                 |
