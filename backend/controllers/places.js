@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const db = require("../models")
+const jwt = require('json-web-token')
 
 const { Place, Comment, User } = db
 
@@ -94,22 +95,53 @@ router.post('/:placeId/comments', async (req, res) => {
         res.status(404).json({ message: `Could not find place with id "${placeId}"` })
     }
 
-    const author = await User.findOne({
-        where: { userId: req.body.authorId }
-    })
+    let user;
+    try {
+        //split the auth header into ['Bearer', 'token]
+        const [authenticationMethod, token] = req.headers.authorization.split(' ')
 
-    if (!author) {
-        res.status(404).json({ message: `Could not find author with id "${req.body.authorId}"` })
+        //only handle 'Bearer' auth for now
+        if (authenticationMethod == 'Bearer') {
+            //decode JWT
+            const result = await jwt.decode(process.env.JWT_SECRET, token)
+
+            //get the logged in user's id from the payload
+            const {id} = result.value
+
+            //find the user object using their id
+            user = await User.findOne({
+                where: {
+                    userId: id
+                }
+            })
+        }
+    } catch {
+        res.json(null)
+    }
+
+    // const author = await User.findOne({
+    //     where: { userId: req.body.authorId }
+    // })
+
+    // if (!author) {
+    //     res.status(404).json({ message: `Could not find author with id "${req.body.authorId}"` })
+    // }
+
+    if (!user) {
+        return res.status(404).json({
+            message: `You must be logged in to leave a review.`
+        })
     }
 
     const comment = await Comment.create({
         ...req.body,
+        authorId: user.userId,
         placeId: placeId
     })
-
+   
     res.send({
         ...comment.toJSON(),
-        author
+        author: user
     })
 })
 
